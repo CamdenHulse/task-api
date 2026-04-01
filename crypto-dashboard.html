@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crypto Terminal</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0a0e17;--card:#111827;--border:#1e293b;--text:#e2e8f0;
+    --dim:#64748b;--green:#22c55e;--red:#ef4444;--accent:#3b82f6;
+    --glow-green:rgba(34,197,94,.15);--glow-red:rgba(239,68,68,.15);
+    --font:'SF Mono','Cascadia Code','Fira Code','Consolas',monospace;
+  }
+  html{font-size:16px}
+  body{
+    background:var(--bg);color:var(--text);font-family:var(--font);
+    min-height:100vh;display:flex;flex-direction:column;align-items:center;
+    padding:2rem 1rem;
+  }
+
+  /* Header */
+  header{
+    width:100%;max-width:1100px;display:flex;align-items:center;
+    justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem;
+  }
+  .logo{display:flex;align-items:center;gap:.75rem}
+  .logo-dot{
+    width:10px;height:10px;border-radius:50%;background:var(--green);
+    box-shadow:0 0 8px var(--green);animation:pulse 2s infinite;
+  }
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  .logo h1{font-size:1.1rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+  .meta{display:flex;align-items:center;gap:1.5rem;font-size:.75rem;color:var(--dim)}
+  .countdown-ring{
+    width:28px;height:28px;position:relative;display:flex;
+    align-items:center;justify-content:center;
+  }
+  .countdown-ring svg{position:absolute;top:0;left:0;transform:rotate(-90deg)}
+  .countdown-ring .num{font-size:.65rem;color:var(--text);z-index:1}
+  .status-badge{
+    display:flex;align-items:center;gap:.4rem;
+    padding:.25rem .6rem;border-radius:9999px;font-size:.7rem;
+    background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.2);
+  }
+  .status-badge.error{
+    background:rgba(239,68,68,.1);color:var(--red);border-color:rgba(239,68,68,.2);
+  }
+
+  /* Grid */
+  .grid{
+    width:100%;max-width:1100px;
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.25rem;
+  }
+
+  /* Card */
+  .card{
+    background:var(--card);border:1px solid var(--border);border-radius:12px;
+    padding:1.5rem;display:flex;flex-direction:column;gap:1rem;
+    transition:border-color .3s,box-shadow .3s;position:relative;overflow:hidden;
+  }
+  .card:hover{border-color:var(--accent);box-shadow:0 0 20px rgba(59,130,246,.08)}
+  .card.flash-green{border-color:var(--green);box-shadow:0 0 24px var(--glow-green)}
+  .card.flash-red{border-color:var(--red);box-shadow:0 0 24px var(--glow-red)}
+
+  .card-top{display:flex;align-items:center;justify-content:space-between}
+  .coin-id{display:flex;align-items:center;gap:.6rem}
+  .coin-icon{
+    width:36px;height:36px;border-radius:50%;display:flex;align-items:center;
+    justify-content:center;font-size:1rem;font-weight:700;
+  }
+  .coin-icon.btc{background:#f7931a22;color:#f7931a}
+  .coin-icon.eth{background:#627eea22;color:#627eea}
+  .coin-icon.sol{background:#9945ff22;color:#9945ff}
+  .coin-name{font-size:.85rem;font-weight:600}
+  .coin-symbol{font-size:.7rem;color:var(--dim);text-transform:uppercase}
+
+  .badge{
+    font-size:.75rem;font-weight:600;padding:.2rem .55rem;border-radius:6px;
+    display:flex;align-items:center;gap:.25rem;
+  }
+  .badge.up{background:rgba(34,197,94,.12);color:var(--green)}
+  .badge.down{background:rgba(239,68,68,.12);color:var(--red)}
+
+  .price-row{display:flex;align-items:baseline;gap:.5rem}
+  .price{font-size:1.75rem;font-weight:700;letter-spacing:-.02em}
+  .price-sub{font-size:.75rem;color:var(--dim)}
+
+  .sparkline-wrap{height:60px;width:100%;position:relative}
+  .sparkline-wrap svg{width:100%;height:100%}
+
+  .stats{
+    display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;
+    border-top:1px solid var(--border);padding-top:.75rem;
+  }
+  .stat-label{font-size:.6rem;color:var(--dim);text-transform:uppercase;letter-spacing:.06em}
+  .stat-value{font-size:.78rem;font-weight:600;margin-top:.15rem}
+
+  /* Footer */
+  footer{
+    margin-top:2.5rem;font-size:.7rem;color:var(--dim);text-align:center;
+    max-width:1100px;width:100%;border-top:1px solid var(--border);padding-top:1.25rem;
+  }
+
+  /* Skeleton loading */
+  .skeleton{
+    background:linear-gradient(90deg,var(--border) 25%,#1e293b80 50%,var(--border) 75%);
+    background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:4px;
+  }
+  @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+  .skel-price{width:160px;height:28px}
+  .skel-badge{width:64px;height:22px;border-radius:6px}
+  .skel-spark{width:100%;height:60px;border-radius:8px}
+
+  @media(max-width:400px){
+    .price{font-size:1.35rem}
+    .card{padding:1.15rem}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    <h1>Crypto Terminal</h1>
+  </div>
+  <div class="meta">
+    <span id="clock"></span>
+    <div class="countdown-ring" title="Next refresh">
+      <svg width="28" height="28" viewBox="0 0 28 28">
+        <circle cx="14" cy="14" r="12" fill="none" stroke="#1e293b" stroke-width="2"/>
+        <circle id="cd-circle" cx="14" cy="14" r="12" fill="none" stroke="#3b82f6"
+          stroke-width="2" stroke-dasharray="75.4" stroke-dashoffset="0"
+          stroke-linecap="round"/>
+      </svg>
+      <span class="num" id="cd-num">10</span>
+    </div>
+    <div class="status-badge" id="status"><span id="status-dot">&#9679;</span> <span id="status-text">LIVE</span></div>
+  </div>
+</header>
+
+<div class="grid" id="grid"></div>
+
+<footer>
+  Data from CoinGecko Public API &middot; Updates every 10 s &middot; Prices in USD
+</footer>
+
+<script>
+const COINS = [
+  { id:'bitcoin',  sym:'BTC', name:'Bitcoin',  icon:'B',  cls:'btc' },
+  { id:'ethereum', sym:'ETH', name:'Ethereum', icon:'E',  cls:'eth' },
+  { id:'solana',   sym:'SOL', name:'Solana',   icon:'S',  cls:'sol' },
+];
+
+const REFRESH = 10;
+const HISTORY_LEN = 30;       // sparkline data points
+const history = {};           // id -> [{price, ts}]
+let countdown = REFRESH;
+let timer = null;
+
+// ── Helpers ─────────────────────────────────────────────────────
+const fmt = (n) => {
+  if (n == null) return '—';
+  if (n >= 1) return n.toLocaleString('en-US',{style:'currency',currency:'USD',minimumFractionDigits:2,maximumFractionDigits:2});
+  return '$' + n.toFixed(6);
+};
+const fmtB = (n) => {
+  if (n == null) return '—';
+  if (n >= 1e12) return '$' + (n/1e12).toFixed(2) + 'T';
+  if (n >= 1e9)  return '$' + (n/1e9).toFixed(2) + 'B';
+  if (n >= 1e6)  return '$' + (n/1e6).toFixed(2) + 'M';
+  return fmt(n);
+};
+const fmtVol = fmtB;
+const fmtPct = (n) => {
+  if (n == null) return '—';
+  return (n >= 0 ? '+' : '') + n.toFixed(2) + '%';
+};
+
+// ── Sparkline SVG builder ───────────────────────────────────────
+function buildSparkline(points, up) {
+  if (!points || points.length < 2) return '';
+  const W = 300, H = 60, pad = 2;
+  const prices = points.map(p => p.price);
+  const min = Math.min(...prices), max = Math.max(...prices);
+  const range = max - min || 1;
+
+  const coords = prices.map((p,i) => {
+    const x = pad + (i / (prices.length - 1)) * (W - pad*2);
+    const y = pad + (1 - (p - min) / range) * (H - pad*2);
+    return [x.toFixed(1), y.toFixed(1)];
+  });
+
+  const line = coords.map((c,i) => (i === 0 ? 'M' : 'L') + c[0] + ',' + c[1]).join(' ');
+  const fill = line + ` L${coords[coords.length-1][0]},${H} L${coords[0][0]},${H} Z`;
+
+  const color = up ? '#22c55e' : '#ef4444';
+  const fillColor = up ? 'rgba(34,197,94,.08)' : 'rgba(239,68,68,.08)';
+
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+    <defs><linearGradient id="g-${up?'up':'dn'}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${fillColor.replace('.08','.18')}"/>
+      <stop offset="100%" stop-color="${fillColor.replace('.08','.01')}"/>
+    </linearGradient></defs>
+    <path d="${fill}" fill="url(#g-${up?'up':'dn'})" />
+    <path d="${line}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="${coords[coords.length-1][0]}" cy="${coords[coords.length-1][1]}" r="2.5" fill="${color}">
+      <animate attributeName="opacity" values="1;.4;1" dur="2s" repeatCount="indefinite"/>
+    </circle>
+  </svg>`;
+}
+
+// ── Card rendering ──────────────────────────────────────────────
+function skeletonCard(coin) {
+  return `<div class="card" id="card-${coin.id}">
+    <div class="card-top">
+      <div class="coin-id"><div class="coin-icon ${coin.cls}">${coin.icon}</div>
+        <div><div class="coin-name">${coin.name}</div><div class="coin-symbol">${coin.sym}</div></div>
+      </div>
+      <div class="skeleton skel-badge"></div>
+    </div>
+    <div class="price-row"><div class="skeleton skel-price"></div></div>
+    <div class="sparkline-wrap"><div class="skeleton skel-spark"></div></div>
+    <div class="stats">
+      <div><div class="stat-label">Mkt Cap</div><div class="stat-value">—</div></div>
+      <div><div class="stat-label">24h Vol</div><div class="stat-value">—</div></div>
+      <div><div class="stat-label">24h Range</div><div class="stat-value">—</div></div>
+    </div>
+  </div>`;
+}
+
+function renderCard(coin, d) {
+  const pct = d.price_change_percentage_24h;
+  const up = pct >= 0;
+  const h = history[coin.id] || [];
+  const prevPrice = h.length >= 2 ? h[h.length - 2].price : null;
+  const flashClass = prevPrice != null && d.current_price !== prevPrice
+    ? (d.current_price > prevPrice ? 'flash-green' : 'flash-red') : '';
+
+  return `<div class="card ${flashClass}" id="card-${coin.id}">
+    <div class="card-top">
+      <div class="coin-id"><div class="coin-icon ${coin.cls}">${coin.icon}</div>
+        <div><div class="coin-name">${coin.name}</div><div class="coin-symbol">${coin.sym}</div></div>
+      </div>
+      <div class="badge ${up?'up':'down'}">${up?'&#9650;':'&#9660;'} ${fmtPct(pct)}</div>
+    </div>
+    <div class="price-row">
+      <span class="price">${fmt(d.current_price)}</span>
+      <span class="price-sub">${coin.sym}/USD</span>
+    </div>
+    <div class="sparkline-wrap">${buildSparkline(h, up)}</div>
+    <div class="stats">
+      <div><div class="stat-label">Mkt Cap</div><div class="stat-value">${fmtB(d.market_cap)}</div></div>
+      <div><div class="stat-label">24h Vol</div><div class="stat-value">${fmtVol(d.total_volume)}</div></div>
+      <div><div class="stat-label">24h Range</div><div class="stat-value">${fmt(d.low_24h)} – ${fmt(d.high_24h)}</div></div>
+    </div>
+  </div>`;
+}
+
+// ── Data fetching ───────────────────────────────────────────────
+async function fetchPrices() {
+  const ids = COINS.map(c => c.id).join(',');
+  const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&sparkline=false&price_change_percentage=24h`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+let fetching = false;
+async function tick() {
+  if (fetching) return;
+  fetching = true;
+  try {
+    const data = await fetchPrices();
+    if (!Array.isArray(data)) throw new Error('Unexpected API response');
+    const map = {};
+    data.forEach(d => { map[d.id] = d; });
+
+    COINS.forEach(coin => {
+      const d = map[coin.id];
+      if (!d) return;
+      if (!history[coin.id]) history[coin.id] = [];
+      history[coin.id].push({ price: d.current_price, ts: Date.now() });
+      if (history[coin.id].length > HISTORY_LEN) history[coin.id].shift();
+    });
+
+    const grid = document.getElementById('grid');
+    grid.innerHTML = COINS.map(coin => {
+      const d = map[coin.id];
+      return d ? renderCard(coin, d) : skeletonCard(coin);
+    }).join('');
+
+    // clear flash after animation
+    setTimeout(() => {
+      document.querySelectorAll('.card.flash-green,.card.flash-red').forEach(el => {
+        el.classList.remove('flash-green','flash-red');
+      });
+    }, 600);
+
+    setStatus(true);
+  } catch (e) {
+    console.error('Fetch error:', e);
+    setStatus(false);
+  } finally {
+    fetching = false;
+  }
+}
+
+function setStatus(ok) {
+  const badge = document.getElementById('status');
+  const text = document.getElementById('status-text');
+  if (ok) {
+    badge.className = 'status-badge';
+    text.textContent = 'LIVE';
+  } else {
+    badge.className = 'status-badge error';
+    text.textContent = 'ERR';
+  }
+}
+
+// ── Countdown & clock ───────────────────────────────────────────
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent =
+    now.toLocaleTimeString('en-US', { hour12: false });
+}
+
+function startCountdown() {
+  countdown = REFRESH;
+  const circle = document.getElementById('cd-circle');
+  const num = document.getElementById('cd-num');
+  const circumference = 2 * Math.PI * 12; // r=12
+
+  clearInterval(timer);
+  timer = setInterval(() => {
+    countdown--;
+    if (countdown < 0) countdown = REFRESH;
+    num.textContent = countdown;
+    const offset = circumference * (1 - countdown / REFRESH);
+    circle.style.strokeDashoffset = offset;
+    updateClock();
+  }, 1000);
+}
+
+// ── Init ────────────────────────────────────────────────────────
+(async function init() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = COINS.map(c => skeletonCard(c)).join('');
+  updateClock();
+
+  await tick();
+  startCountdown();
+
+  setInterval(async () => {
+    await tick();
+    countdown = REFRESH;
+  }, REFRESH * 1000);
+})();
+</script>
+</body>
+</html>
