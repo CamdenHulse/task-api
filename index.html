@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Treena — Your AI Coding Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ───────────── NAV ───────────── -->
+  <nav class="nav" id="nav">
+    <div class="nav__inner">
+      <a class="nav__logo" href="#">
+        <span class="logo-icon">⬡</span> Treena
+      </a>
+      <ul class="nav__links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how">How It Works</a></li>
+        <li><a href="#demo">Demo</a></li>
+      </ul>
+      <a class="btn btn--sm" href="#cta">Get Started</a>
+    </div>
+  </nav>
+
+  <!-- ───────────── HERO ───────────── -->
+  <section class="hero" id="hero">
+    <div class="hero__bg-grid"></div>
+    <div class="hero__glow hero__glow--1"></div>
+    <div class="hero__glow hero__glow--2"></div>
+
+    <div class="container hero__inner">
+      <div class="badge fade-up">✦ AI-Powered Dev Assistant</div>
+      <h1 class="hero__title fade-up">
+        Code smarter.<br />
+        Ship <span class="gradient-text">faster.</span>
+      </h1>
+      <p class="hero__sub fade-up">
+        Treena lives inside your workspace — reading files, editing code,
+        running commands, and pushing to git — so you can focus on building,
+        not babysitting.
+      </p>
+      <div class="hero__cta fade-up">
+        <a class="btn btn--lg" href="#cta">Start Building Free</a>
+        <a class="btn btn--ghost btn--lg" href="#how">See How It Works →</a>
+      </div>
+
+      <!-- Terminal mock -->
+      <div class="terminal fade-up">
+        <div class="terminal__bar">
+          <span class="dot dot--red"></span>
+          <span class="dot dot--yellow"></span>
+          <span class="dot dot--green"></span>
+          <span class="terminal__title">treena — workspace</span>
+        </div>
+        <div class="terminal__body">
+          <p><span class="t-dim">$</span> <span class="t-cmd" id="typed-cmd"></span><span class="cursor">▋</span></p>
+          <p class="t-out">✔ Reading <span class="t-file">src/components/Button.tsx</span></p>
+          <p class="t-out">✔ Refactoring to use design-system tokens…</p>
+          <p class="t-out">✔ Running <span class="t-file">npm test</span> — 42 passed, 0 failed</p>
+          <p class="t-out">✔ Committed <span class="t-accent">"feat: button variant polish"</span> → pushed</p>
+          <p class="t-prompt"><span class="t-dim">$</span> <span class="t-accent">Done. What's next?</span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────── LOGOS (social proof) ───────────── -->
+  <section class="logos">
+    <div class="container">
+      <p class="logos__label">Built for developers who ship with</p>
+      <div class="logos__row">
+        <span class="logo-pill">React</span>
+        <span class="logo-pill">Node.js</span>
+        <span class="logo-pill">Python</span>
+        <span class="logo-pill">TypeScript</span>
+        <span class="logo-pill">Next.js</span>
+        <span class="logo-pill">Go</span>
+        <span class="logo-pill">Rust</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────── FEATURES ───────────── -->
+  <section class="features section" id="features">
+    <div class="container">
+      <div class="section-header fade-up">
+        <span class="section-tag">Features</span>
+        <h2 class="section-title">Everything you need.<br />Nothing you don't.</h2>
+        <p class="section-sub">Treena is a full coding teammate that understands your entire codebase — not just the snippet you paste.</p>
+      </div>
+
+      <div class="features__grid">
+
+        <div class="feature-card fade-up">
+          <div class="feature-card__icon">📂</div>
+          <h3>Deep File Intelligence</h3>
+          <p>Treena reads, searches, and writes files across your entire project — following imports, tracing dependencies, and understanding context the way a senior engineer would.</p>
+          <ul class="feature-list">
+            <li>Read any file by relative path</li>
+            <li>Grep across the whole workspace</li>
+            <li>List directories and explore structure</li>
+          </ul>
+        </div>
+
+        <div class="feature-card fade-up feature-card--accent">
+          <div class="feature-card__icon">⚡</div>
+          <h3>Live Command Execution</h3>
+          <p>Run builds, tests, linters, and scripts directly — Treena sees the output and iterates until things pass, no copy-paste required.</p>
+          <ul class="feature-list">
+            <li>npm, npx, node, git and more</li>
+            <li>Reads stdout/stderr to self-correct</li>
+            <li>Bounded & safe execution model</li>
+          </ul>
+        </div>
+
+        <div class="feature-card fade-up">
+          <div class="feature-card__icon">🔀</div>
+          <h3>Native Git Operations</h3>
+          <p>Stage, commit, branch, push, and pull without leaving the conversation. Treena handles the full git lifecycle with authenticated HTTPS remotes.</p>
+          <ul class="feature-list">
+            <li>Inspect diffs & history</li>
+            <li>Write meaningful commit messages</li>
+            <li>Push to GitHub with token auth</li>
+          </ul>
+        </div>
+
+        <div class="feature-card fade-up">
+          <div class="feature-card__icon">✏️</div>
+          <h3>Precise Code Editing</h3>
+          <p>Create and overwrite files with surgical precision. Treena reads before it writes — no hallucinated paths, no dropped context.</p>
+          <ul class="feature-list">
+            <li>Full file create & overwrite</li>
+            <li>Reads current content first</li>
+            <li>Preserves formatting & style</li>
+          </ul>
+        </div>
+
+        <div class="feature-card fade-up">
+          <div class="feature-card__icon">🧠</div>
+          <h3>Codebase-Wide Context</h3>
+          <p>Treena synthesises information across multiple files before responding — so answers actually match your architecture, not a generic template.</p>
+          <ul class="feature-list">
+            <li>Cross-file reasoning</li>
+            <li>Understands project conventions</li>
+            <li>References real code, not guesses</li>
+          </ul>
+        </div>
+
+        <div class="feature-card fade-up feature-card--accent">
+          <div class="feature-card__icon">🚀</div>
+          <h3>Ship-Ready Workflow</h3>
+          <p>From first prompt to production commit in one flow. Treena plans, executes, tests, and ships — a complete dev loop without the back-and-forth.</p>
+          <ul class="feature-list">
+            <li>Plan → code → test → commit</li>
+            <li>Integrated QA & review step</li>
+            <li>Git push to remote on completion</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────── HOW IT WORKS ───────────── -->
+  <section class="how section" id="how">
+    <div class="container">
+      <div class="section-header fade-up">
+        <span class="section-tag">How It Works</span>
+        <h2 class="section-title">Your idea → production.<br />In one conversation.</h2>
+      </div>
+
+      <div class="steps">
+        <div class="step fade-up">
+          <div class="step__num">01</div>
+          <div class="step__body">
+            <h3>Describe what you want</h3>
+            <p>Tell Treena what to build, fix, refactor, or ship. Plain English — no special syntax, no templates.</p>
+          </div>
+        </div>
+        <div class="step__connector"></div>
+
+        <div class="step fade-up">
+          <div class="step__num">02</div>
+          <div class="step__body">
+            <h3>Treena explores your workspace</h3>
+            <p>She reads relevant files, searches for patterns, and builds a full picture of your codebase before touching a single line.</p>
+          </div>
+        </div>
+        <div class="step__connector"></div>
+
+        <div class="step fade-up">
+          <div class="step__num">03</div>
+          <div class="step__body">
+            <h3>Code is written & tested</h3>
+            <p>Treena writes the changes, runs your test suite, checks the output, and iterates automatically until everything is green.</p>
+          </div>
+        </div>
+        <div class="step__connector"></div>
+
+        <div class="step fade-up">
+          <div class="step__num">04</div>
+          <div class="step__body">
+            <h3>Committed & pushed to git</h3>
+            <p>A clean, descriptive commit lands on your branch. Treena pushes to your remote — ready for review or merge.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────── DEMO / CODE SHOWCASE ───────────── -->
+  <section class="demo section" id="demo">
+    <div class="container demo__inner">
+      <div class="demo__copy fade-up">
+        <span class="section-tag">Real interaction</span>
+        <h2 class="section-title">Watch Treena work.</h2>
+        <p>One message. Treena reads the file, spots the bug, fixes it, runs the tests, and commits — in seconds, not minutes.</p>
+        <a class="btn btn--lg" href="#cta">Try It Yourself</a>
+      </div>
+
+      <div class="chat fade-up">
+        <div class="chat__bar">
+          <span class="dot dot--red"></span>
+          <span class="dot dot--yellow"></span>
+          <span class="dot dot--green"></span>
+          <span class="chat__title">Treena Chat</span>
+        </div>
+        <div class="chat__body">
+          <div class="msg msg--user">
+            The login function is broken — users can't sign in. Can you find and fix the bug?
+          </div>
+          <div class="msg msg--treena">
+            <span class="msg__name">Treena</span>
+            On it. Let me read the auth module first…
+            <div class="tool-call">📂 read_file("src/auth/login.ts")</div>
+            Found it — the JWT expiry was set to <code>0</code> instead of <code>"7d"</code>. Fixing now.
+            <div class="tool-call">✏️ write_file("src/auth/login.ts")</div>
+            <div class="tool-call">⚡ npm test -- --grep auth</div>
+            All 12 auth tests passing. Committing the fix.
+            <div class="tool-call">🔀 git commit -m "fix: correct JWT expiry from 0 to 7d"</div>
+            Done ✓ — pushed to <strong>main</strong>. Users can sign in again.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────── CTA ───────────── -->
+  <section class="cta-section section" id="cta">
+    <div class="container">
+      <div class="cta-box fade-up">
+        <div class="hero__glow hero__glow--1" style="top:-80px;left:30%;"></div>
+        <span class="section-tag">Get Started</span>
+        <h2>Ready to build with Treena?</h2>
+        <p>Drop Treena into your workspace and start shipping in minutes.</p>
+        <form class="cta-form" onsubmit="handleCta(event)">
+          <input class="cta-form__input" type="email" placeholder="you@yourcompany.com" required />
+          <button class="btn btn--lg" type="submit">Get Early Access</button>
+        </form>
+        <p class="cta-fine">No credit card required. Free for individual developers.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────── FOOTER ───────────── -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <a class="nav__logo" href="#">
+        <span class="logo-icon">⬡</span> Treena
+      </a>
+      <p class="footer__copy">© 2025 Treena. All rights reserved.</p>
+      <div class="footer__links">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">GitHub</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
